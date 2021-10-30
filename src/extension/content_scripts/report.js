@@ -422,10 +422,10 @@ function ReportTemplate(params, ui_options) {
                 label : "#"
             },
             seller : {
-                href : {
-                    url : "url",
-                    text : "name"
-                },
+//                href : {
+//                    url : "url",
+//                    text : "name"
+//                },
                 label : "Seller",
                 sort : true
             },
@@ -433,10 +433,10 @@ function ReportTemplate(params, ui_options) {
                 label : "Purchase date",
                 sort : true
             },
-            elapsedDays : {
-                label : "Days",
-                sort : true
-            },
+//            elapsedDays : {
+//                label : "Days",
+//                sort : true
+//            },
             price : {
                 label : "Item price",
                 sort : true
@@ -445,28 +445,28 @@ function ReportTemplate(params, ui_options) {
                 label : "Quantity",
                 sort : true
             },
-            shipStatus : {
-                label : "Shipping status",
-                sort : true
-            },
-            deliveryDate : {
-                label : "Estimated delivery",
-                sort : true
-            },
-            etaDays : {
-                label : "ETA",
-                sort : true
-            },
+//            shipStatus : {
+//                label : "Shipping status",
+//                sort : true
+//            },
+//            deliveryDate : {
+//                label : "Estimated delivery",
+//                sort : true
+//            },
+//            etaDays : {
+//                label : "ETA",
+//                sort : true
+//            },
             specs : {
                 label : "Item description",
             },
-            trackingNo : {
-                href : {
-                    url : "url",
-                    text : "name"
-                },
-                label : "TrackingNo"
-            }
+//            trackingNo : {
+//                href : {
+//                    url : "url",
+//                    text : "name"
+//                },
+//                label : "TrackingNo"
+//            }
         };
 
         return cols;
@@ -778,7 +778,7 @@ function ReportTemplate(params, ui_options) {
         };
 
         var f, a = [], v, attr;
-        var attrs = getItemHighlightedAttrs(fields);
+        var attrs = false;		//mb getItemHighlightedAttrs(fields);
 
         if (false !== attrs) {
             updateLegend(attrs);
@@ -809,17 +809,17 @@ function ReportTemplate(params, ui_options) {
                 }
 
                 // in case of a href column
-                if (cols[f].hasOwnProperty('href')) {
-                    var td = appendElement(row, 'td', null, attr);
-                    var hrefCol = cols[f].href;
-                    appendElement(td, 'a', fields[f][hrefCol.text], {
-                        "href" : fields[f][hrefCol.url],
-                        "target" : "_blank"
-                    });
-                } else {
+//                if (cols[f].hasOwnProperty('href')) {
+//                    var td = appendElement(row, 'td', null, attr);
+//                    var hrefCol = cols[f].href;
+//                    appendElement(td, 'a', fields[f][hrefCol.text], {
+//                        "href" : fields[f][hrefCol.url],
+//                        "target" : "_blank"
+//                    });
+//                } else {
                     // a normal text column
                     appendElement(row, 'td', fields[f], attr);
-                }
+//                }
             }
         }
     }
@@ -866,27 +866,27 @@ function ReportTemplate(params, ui_options) {
             c = e.price.replace(/.*?([a-zA-Z]+)/g, '$1');
             n = e.seller.name;
 
-            var newGroup = ('' == sortby || sortByDate) && (prevDate.length && e.purchaseDate != prevDate);
-            newGroup = newGroup || (prevCurrency.length && c != prevCurrency);
-            newGroup = newGroup || ('seller' == sortby && prevSeller.length && n != prevSeller);
-
-            // print the group footer
-            if (ui_options.enableGrouping && newGroup) {
-                addGrpFooter(parent, 'SUBTOTAL', t, currency, j, s);
-                g += 1;
-                j = 0;
-                t = 0;
-                s = 0;
-                prevDate = e.purchaseDate;
-                prevCurrency = c;
-                prevSeller = n;
-            }
-
-            if (/\d+/g.test(e.shipStatus)) {
-                s += 1;
-                ts += 1;
-            }
-
+//            var newGroup = ('' == sortby || sortByDate) && (prevDate.length && e.purchaseDate != prevDate);
+//            newGroup = newGroup || (prevCurrency.length && c != prevCurrency);
+//            newGroup = newGroup || ('seller' == sortby && prevSeller.length && n != prevSeller);
+//
+//            // print the group footer
+//            if (ui_options.enableGrouping && newGroup) {
+//                addGrpFooter(parent, 'SUBTOTAL', t, currency, j, s);
+//                g += 1;
+//                j = 0;
+//                t = 0;
+//                s = 0;
+//                prevDate = e.purchaseDate;
+//                prevCurrency = c;
+//                prevSeller = n;
+//            }
+//
+//            if (/\d+/g.test(e.shipStatus)) {
+//                s += 1;
+//                ts += 1;
+//            }
+            console.log(e)
             currency = c;
             v = parseFloat(e.price.replace(/.*?([\d\.,]+).*/g, '$1').replace(',', ''));
             t += v;
@@ -894,17 +894,17 @@ function ReportTemplate(params, ui_options) {
 
             var itemData = {
                 index : i + 1,
-                seller : e.seller,
+                seller : n,
                 purchaseDate : e.purchaseDate,
-                elapsedDays : e.elapsedDays,
+//                elapsedDays : e.elapsedDays,
                 price : e.price,
-                quantity : e.quantity,
-                shipStatus : e.shipStatus,
-                deliveryDate : e.deliveryDate,
-                etaDays : e.etaDays,
+                quantity : e.itemAspectValues.Quantity,
+//                shipStatus : e.shipStatus,
+//                deliveryDate : e.deliveryDate,
+//                etaDays : e.etaDays,
                 specs : e.specs,
-                received : !e.feedbackNotLeft,
-                trackingNo : e.trackingNo
+//                received : !e.feedbackNotLeft,
+//                trackingNo : e.trackingNo
             };
 
             // print the item's row
@@ -1004,6 +1004,7 @@ function ReportPageScript() {
         var table = document.querySelector('.report');
 
         if (null !== table) {
+        	console.log('ReportTemplate');
             var report = new ReportTemplate(data, ui_options);
             report.printData(table);
         } else {
