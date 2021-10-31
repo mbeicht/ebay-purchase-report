@@ -103,13 +103,24 @@ function ReportTemplate(params, ui_options) {
 
         // create the downloadable blob on-demand only
         function onExport(event) {
+        	var extraNamePart = '';
             var type = event.target.getAttribute("data-type");
-            var blob = new Blob([ getExportData(type) ], {
+        	var exportData = getExportData(type);
+            if (type == 'csv') {
+	        	var lines = exportData.split('\n');
+	        	var fields = lines[1].split('\t');
+//	        	console.log(fields);
+	        	extraNamePart = '-[' + fields[3].slice(0,10) + ']';
+//	        	console.log(extraNamePart);
+            }
+            var blob = new Blob([ exportData ], {
                 type : mime[type]
             });
             var url = window.URL.createObjectURL(blob);
             var today = new Date();
-            var filename = "ebay-purchase-history-" + today.getFullYear() + today.getMonth() + today.getDay() + "." + type;
+            var filename = "ebay-purchase-history-" + 
+            	today.getFullYear() + ("0"+(today.getMonth()+1)).slice(-2) + ("0"+(today.getDate()+1)).slice(-2) + 
+            	extraNamePart + "." + type;
 
             agent.downloads.download({
                 url : url,
@@ -372,6 +383,9 @@ function ReportTemplate(params, ui_options) {
                     case 'trackingNo':
                         s = order[i]["name"];
                         break;
+                    case 'purchaseDate':
+                  		s = order[i].slice(0,10); //.getFullYear() + ("0"+(order[1].getMonth()+1)).slice(-2) + ("0"+(order[1].getDate()+1)).slice(-2);
+                    	break;
                     default:
                         s = order[i];
                         break;
@@ -886,7 +900,7 @@ function ReportTemplate(params, ui_options) {
 //                s += 1;
 //                ts += 1;
 //            }
-            console.log(e)
+//            console.log(e)
             currency = c;
             v = parseFloat(e.price.replace(/.*?([\d\.,]+).*/g, '$1').replace(',', ''));
             t += v;
@@ -1004,7 +1018,7 @@ function ReportPageScript() {
         var table = document.querySelector('.report');
 
         if (null !== table) {
-        	console.log('ReportTemplate');
+//        	console.log('ReportTemplate');
             var report = new ReportTemplate(data, ui_options);
             report.printData(table);
         } else {

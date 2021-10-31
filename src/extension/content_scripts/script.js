@@ -132,7 +132,8 @@ function QuickReport(params) {
         // parse the document
         for (order in orders) {
             if (orders.hasOwnProperty(order)) {
-                var orderId = orders[order].querySelector('div.m-container-item-layout-row.m-container-item-layout-row__body').getAttribute('data-listing-id');
+//            	<div class="ph-col__info-orderNumber"><dt>ORDER NUMBER</dt><dd>353355340974-1223798826022</dd></div>
+                var orderId = getInnerText(orders[order].querySelector('div.ph-col__info-orderNumber dd'), 'N/A');
             	console.log(orderId);
 //            	<div class="ph-col__info-orderPackageDetails"><dt>SOLD BY</dt><dd><a href="https://www.ebay.com.au/usr/solo-lo" class="PSEUDOLINK" _sp="p2506613.m2749.l2754"><span class="PSEUDOLINK">solo-lo<span class="clipped"> username, click for member's profile</span></span></a></dd></div>
             	var sellerNode = orders[order].querySelector('.ph-col__info-orderPackageDetails dd');
@@ -141,8 +142,10 @@ function QuickReport(params) {
                 var sellerUrl = sellerNode.querySelector('a').getAttribute('href', 'N/A');
             	console.log(sellerUrl);
 //                var purchaseDate = getInnerText(orders[order].querySelector('.order-row .purchase-header .row-date'), '');
-            	var purchaseDate = getInnerText(orders[order].querySelector('.ph-col__info-orderDate dd'), 'N/A');
-            	console.log(purchaseDate);
+            	var purchaseDateText = getInnerText(orders[order].querySelector('.ph-col__info-orderDate dd'), 'N/A');
+//            	console.log(purchaseDateText);
+            	var purchaseDate = new Date(purchaseDateText + ' 00:00:00 UTC');
+//            	console.log(purchaseDate);
             	
                 var orderItems = orders[order].querySelectorAll('.m-container-item-layout-row.m-container-item-layout-row__body');
 //                var elapsedDays = dateDiff(dateParse(purchaseDate));
